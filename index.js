@@ -28,7 +28,6 @@ const RoutePropsMixin = {
     },
     methods: {
         applyRouteProps() {
-            console.log("Applying route props!");
             if(this.$options.routeProps) {
                 var keys = Object.keys(this.$options.routeProps);
                 var route = this.$route;
