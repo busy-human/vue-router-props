@@ -1,5 +1,5 @@
 {
-  "name": "vue-router-props",
+  "name": "@busy-human/vue-router-props",
   "version": "1.0.1",
   "description": "Automatically bind to route properties and meta data and set data values on your Vue instance accordingly",
   "main": "index.js",
