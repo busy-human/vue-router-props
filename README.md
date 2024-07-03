@@ -26,13 +26,13 @@
 
     // Get refs to route properties or meta properties
 
-    // currentRoute.path
+    // Get ref for currentRoute.path
     const path = routerProps.ref("path");
 
-    // currentRoute.meta.showHeader
+    // Get ref for currentRoute.meta.showHeader
     const showHeader = routerProps.ref("showHeader");
 
-    // React to changes (e.g. currentRoute.meta.askForDisclaimer)
+    // React to changes on certain properties (e.g. currentRoute.meta.requiresAuth)
     routerProps.onChange("requiresAuth", (required) => {
         checkNeedsLogin();
     })
