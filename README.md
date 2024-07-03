@@ -33,8 +33,8 @@
     const showHeader = routerProps.ref("showHeader");
 
     // React to changes (e.g. currentRoute.meta.askForDisclaimer)
-    routerProps.onChange("askForDisclaimer", (required) => {
-        showPopup();
+    routerProps.onChange("requiresAuth", (required) => {
+        checkNeedsLogin();
     })
 
 ## Legacy Version
