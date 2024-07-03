@@ -1,3 +1,5 @@
+const RE_VERSION = /^1|^2/i;
+
 function requireRouterOption(feature) {
     if(!RouteProps.router) {
         console.trace();
@@ -53,7 +55,7 @@ const RoutePropsMixin = {
                         this[mapTo] = mapFn(val);
                     } else {
                         this[mapTo] = val;
-                    }                    
+                    }
                 });
             }
         }
@@ -62,7 +64,7 @@ const RoutePropsMixin = {
 
 /**
  * Applies inheritance as necessary
- * @param {*} matchedRoutes 
+ * @param {*} matchedRoutes
  */
 function resolveRouteData(matchedRoutes) {
     var resolvedObj = { meta: {} };
@@ -86,6 +88,10 @@ export const RouteProps = {
     router:     null,
     installed:  false,
     install:    function(Vue, { global = true, router } = {global: false}) {
+        if( ! Vue.version.match(RE_VERSION) ) {
+            console.warn(`vue-router-props/legacy requires Vue 2.x, but you are using ${Vue.version}. Use the main import instead`);
+        }
+
         var strategies = Vue.config.optionMergeStrategies;
         strategies.routeProps = strategies.methods;
         RouteProps.installed = true;

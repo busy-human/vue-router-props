@@ -20,5 +20,11 @@
   "bugs": {
     "url": "https://github.com/busy-human/vue-router-props/issues"
   },
-  "homepage": "https://github.com/busy-human/vue-router-props#readme"
+  "homepage": "https://github.com/busy-human/vue-router-props#readme",
+  "dependencies": {
+    "vue": "^3.4.31"
+  },
+  "devDependencies": {
+    "vue-router": "^4.4.0"
+  }
 }

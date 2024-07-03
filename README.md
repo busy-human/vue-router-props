@@ -1,4 +1,44 @@
 # vue-router-props
+
+## Vue 3.0 Version
+
+### Installation
+
+    // In one of your root or main files
+    import {RouterPropsPlugin} from "@busy-human/vue-router-props";
+
+    Vue.use(RouterPropsPlugin, { router });
+
+    // Inside your router
+    routes = [
+        {
+            path: '/login',
+            component: LoginView,
+            name: "Login",
+            meta: { showHeader: false }
+        },
+    ]
+
+### Usage
+
+    // In your components or views, call inject
+    const routerProps = inject("RouterProps");
+
+    // Get refs to route properties or meta properties
+
+    // currentRoute.path
+    const path = routerProps.ref("path");
+
+    // currentRoute.meta.showHeader
+    const showHeader = routerProps.ref("showHeader");
+
+    // React to changes (e.g. currentRoute.meta.askForDisclaimer)
+    routerProps.onChange("askForDisclaimer", (required) => {
+        showPopup();
+    })
+
+## Legacy Version
+
 Automatically bind to route properties and meta data and set data values on your Vue instance accordingly
 
 The RouteProps mixin makes it easy to react to route changes and updates, allowing you to specify additional data for a route on the route object itself. For example, maybe some of your routes need to be in fullscreen, or need to have the header hidden.
@@ -21,11 +61,11 @@ The RouteProps mixin makes it easy to react to route changes and updates, allowi
 
     // Inside your router
     routes = [
-        { 
-            path: '/login', 
-            component: LoginView, 
-            name: "Login", 
-            meta: { showHeader: false } 
+        {
+            path: '/login',
+            component: LoginView,
+            name: "Login",
+            meta: { showHeader: false }
         },
     ]
 
