@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "allowSyntheticDefaultImports": true,
+        "rootDir": "src",
+        "checkJs": true,
+        "composite": true,
+        "skipLibCheck": true,
+        "outDir": "dist",
+        "lib": ["ES2016", "DOM"],
+        "sourceMap": true,
+        "tsBuildInfoFile": "./dist/.tsbuildinfo",
+        "declaration": true,
+        "esModuleInterop": true,
+        "resolvePackageJsonExports": true
+    },
+    "include": [ "src" ]
+}

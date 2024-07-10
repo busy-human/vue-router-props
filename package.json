@@ -2,10 +2,8 @@
   "name": "@busy-human/vue-router-props",
   "version": "1.0.1",
   "description": "Automatically bind to route properties and meta data and set data values on your Vue instance accordingly",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/busy-human/vue-router-props.git"
@@ -15,6 +13,16 @@
     "vue-router",
     "plugin"
   ],
+  "type": "module",
+  "files": [
+      "/dist"
+  ],
+  "scripts": {
+      "build": "tsc"
+  },
+  "publishConfig": {
+      "registry": "https://npm.pkg.github.com"
+  },
   "author": "Jonathan Oaklyn",
   "license": "MIT",
   "bugs": {

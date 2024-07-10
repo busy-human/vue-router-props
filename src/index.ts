@@ -1,10 +1,10 @@
 import { watch, onMounted, Ref, ref, Plugin, App } from "vue";
-import { Router } from "vue-router";
+import { RouteLocationNormalizedLoadedGeneric, Router, RouteRecord } from "vue-router";
 
 /**
  * The object returned when using inject("RouterProps");
  */
-interface RouterProps {
+export interface RouterProps {
     router: Router;
 
     /** Key used with Vue provide/inject */
@@ -65,7 +65,7 @@ function checkVersion(app: App) {
  * Applies inheritance as necessary
  * @param {*} matchedRoutes
  */
-function resolveRouteData(matchedRoutes) {
+function resolveRouteData(...matchedRoutes: { meta: any }[]): any {
     var resolvedObj = { meta: {} };
     if(!matchedRoutes || matchedRoutes.length === 0) {
         return resolvedObj;
@@ -95,17 +95,20 @@ function factory({router, injectionKey}: FactoryOptions): RouterProps {
          * @param propName top level property name. If its a default route property it'll use that. Otherwise it'll check route.meta for the property.
          * @returns
          */
-        ref<T>(propName: string): Ref<T> {
+        ref<T>(propName: keyof RouteLocationNormalizedLoadedGeneric): Ref<T> {
             let r: Ref<T>;
-            if(refs[propName]) {
-                r = refs[propName];
+            if(refs.get(propName)) {
+                r = refs.get(propName) as Ref<T>;
             } else {
                 if(propName in router.currentRoute.value) {
-                    r = refs[propName] = ref<T>(router.currentRoute.value[propName]) as Ref<T>;
+                    r = ref<T>(router.currentRoute.value[propName] as unknown as any) as Ref<T>;
+                    refs.set(propName, r);
                 } else {
-                    r = refs[propName] = ref<T>(router.currentRoute.value.meta[propName] as T) as Ref<T>;
+                    r = ref<T>(router.currentRoute.value.meta[propName] as T) as Ref<T>;
+                    refs.set(propName, r);
                 }
             }
+            rp.applyRouteProps();
             return r;
         },
         /**
@@ -129,7 +132,7 @@ function factory({router, injectionKey}: FactoryOptions): RouterProps {
          */
         applyRouteProps() {
             if(refs.size > 0) {
-                var route = router.currentRoute;
+                var route = router.currentRoute.value;
                 var resolvedData = resolveRouteData(route);
 
                 refs.forEach((ref, propName) => {
@@ -146,11 +149,16 @@ function factory({router, injectionKey}: FactoryOptions): RouterProps {
         }
     };
 
-    watch(router.currentRoute, function(newVal, oldVal) {
-        if(newVal !== oldVal) {
+    // Update properties when the route changes
+    router.beforeEach(function(to, from, next) {
+        if(to.fullPath !== from.fullPath) {
             rp.applyRouteProps();
         }
-    }, { deep: true });
+        next();
+    });
+
+    // Immediately apply the route props to start with the current route
+    rp.applyRouteProps();
 
     return rp;
 }
@@ -158,7 +166,23 @@ function factory({router, injectionKey}: FactoryOptions): RouterProps {
 
 /**
  * Track and react to route property changes, especially when
- * the currentRoute changes and a common state is changed a result.
+ * the currentRoute changes and a common state is changed as a result.
+ * @example
+ * Vue.use(RouterPropsPlugin, { router });
+ *
+ * // In your components or views, call inject
+ * const routerProps = inject("RouterProps");
+ *
+ * // Get ref for currentRoute.path
+ * const path = routerProps.ref("path");
+ *
+ * // Get ref for currentRoute.meta.showHeader
+ * const showHeader = routerProps.ref("showHeader");
+ *
+ * // React to changes on certain properties (e.g. currentRoute.meta.requiresAuth
+ * routerProps.onChange("requiresAuth", (required) => {
+ *      checkNeedsLogin();
+ * })
  */
 export const RouterPropsPlugin: Plugin = {
     /**
@@ -171,6 +195,9 @@ export const RouterPropsPlugin: Plugin = {
     install: function(app, { router, injectionKeySuffix }: RouterPropsPluginOptions) {
         checkVersion(app);
         const injectionKey = injectionKeySuffix ? `RouterProps${injectionKeySuffix}` : "RouterProps";
+
+        // @ts-ignore
+        window.BASEROUTER = router;
 
         if( ! routers.has(injectionKey) ) {
             const rp = factory({router, injectionKey});
